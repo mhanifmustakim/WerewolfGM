@@ -3,22 +3,26 @@ import Teams from "./Teams";
 const Game = (function () {
     let players = [];
     let isGameOver = false;
-    let dayCount = 1;
+    let dayCount = 0;
     let winner = null;
     let roleQuantities = null;
     let nightActions = null;
 
     const reset = () => {
         players = [];
-        isGameOver = false;
-        dayCount = 1;
-        winner = null;
         roleQuantities = null;
     }
 
     const addPlayer = (player) => {
         players.push(player);
     };
+
+    const addDayCount = () => dayCount += 1;
+
+    const removePlayerWithId = (id) => {
+        const index = players.findIndex((player) => player.id === id);
+        players.splice(index, 1);
+    }
 
     const getPlayerById = (id) => {
         return players.filter((player) => player.id == id)[0]
@@ -88,6 +92,10 @@ const Game = (function () {
 
     const start = () => {
         players.forEach((player) => player.reset());
+        isGameOver = false;
+        dayCount = 0;
+        winner = null;
+
         assignRoles();
     };
 
@@ -127,21 +135,29 @@ const Game = (function () {
 
     return {
         get players() {
-            return players
+            return players;
         },
         get isGameOver() {
-            return isGameOver
+            return isGameOver;
         },
         get winner() {
-            return winner
+            return winner;
+        },
+        get roleQuantities() {
+            return roleQuantities;
+        },
+        get dayCount() {
+            return dayCount;
         },
         setRoleQuantities,
         addPlayer,
+        removePlayerWithId,
         findPlayersByAttr,
         addAction,
         start,
         voteOut,
         reset,
+        addDayCount,
         startNight,
         endNight
     }

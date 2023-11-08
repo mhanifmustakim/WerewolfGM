@@ -1,8 +1,8 @@
 import { createRole, attack, rescue } from './RolesUtils'
 
 
-const Roles = (function () {
-    const citizen = function () {
+const Roles = {
+    citizen: function () {
         const self = createRole({
             name: "Citizen",
             type: "Human",
@@ -12,9 +12,9 @@ const Roles = (function () {
         })
 
         return self
-    };
+    },
 
-    const werewolf = function () {
+    werewolf: function () {
         const self = createRole({
             name: "Werewolf",
             type: "Werewolf",
@@ -23,12 +23,13 @@ const Roles = (function () {
             description: ["The werewolves choose one player to attack every night."],
         });
 
+        self.inputSpec.min = 1;
         self.attack = (id) => attack(self.name, id);
 
         return self
-    }
+    },
 
-    const doctor = function () {
+    doctor: function () {
         const self = createRole({
             name: "Doctor",
             type: "Human",
@@ -37,16 +38,11 @@ const Roles = (function () {
             description: ["The doctor chooses one player to heal every night (not himself). ", "If that player is attacked, the player lives."],
         });
 
+        self.inputSpec.max = 1;
         self.heal = (id) => rescue(self.name, id);
 
         return self
     }
-
-    return {
-        citizen,
-        werewolf,
-        doctor
-    }
-})()
+}
 
 export default Roles

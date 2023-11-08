@@ -1,6 +1,12 @@
 import Game from "./Game";
 
 const createRole = ({ id, name, type, team, abilities, description }) => {
+    const inputSpec = {
+        min: 0,
+        max: Infinity,
+        step: 1
+    }
+
     return {
         get id() {
             return id;
@@ -20,6 +26,9 @@ const createRole = ({ id, name, type, team, abilities, description }) => {
         get description() {
             return description;
         },
+        get inputSpec() {
+            return inputSpec;
+        }
     };
 };
 
