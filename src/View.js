@@ -14,7 +14,6 @@ const View = (function () {
         newPlayerElements.forEach((playerElement) => {
             const actionButtonContainer = document.createElement("div");
             const playerId = playerElement.getAttribute("data-id");
-            console.log(actionBtnCallback);
             const actionButton = actionBtnCallback(playerId);
             actionButtonContainer.appendChild(actionButton);
 
