@@ -5,6 +5,9 @@ import View from "./View";
 import { Buttons } from "./ViewComponent";
 
 const ViewControl = (function () {
+    let gameMode = null;
+    const setGameMode = (newGameMode) => gameMode = newGameMode;
+
     const addPlayer = (e) => {
         e.preventDefault();
 
@@ -24,9 +27,9 @@ const ViewControl = (function () {
     };
 
     const selectGameMode = (e) => {
-        const gameMode = e.target.value ? e.target.value : e.target.parentElement.value;
+        const newGameMode = e.target.value ? e.target.value : e.target.parentElement.value;
 
-        View.setGameMode(gameMode);
+        setGameMode(newGameMode);
         View.displaySelectRoleQuantities();
     }
 
@@ -90,13 +93,33 @@ const ViewControl = (function () {
 
     const startDay = (e) => {
         Game.addDayCount();
-        if (Game.dayCount !== 1) {
-            console.log("Not First Day Start");
-            // View.displayNightResolution();
+        if (Game.isGameOver) {
+            View.displayGameOver();
         } else {
-            console.log("First Day Start");
-            // View.displayDay();
+            View.displayDay();
         }
+    }
+
+    const voteOutPlayer = (e) => {
+        const targetId = parseInt(e.target.getAttribute("data-id"));
+        const player = Game.getPlayerById(targetId);
+        Game.voteOut(targetId);
+        View.displayVoteResults(player.name);
+    }
+
+
+    const startNight = (e) => {
+        if (Game.isGameOver) {
+            View.displayGameOver();
+        } else {
+            Game.startNight();
+            View.displayNightActionRoles();
+        }
+    }
+
+    const endNight = (e) => {
+        const killedPlayers = Game.endNight();
+        View.displayNightResults(killedPlayers.join(", "));
     }
 
     return {
@@ -106,7 +129,11 @@ const ViewControl = (function () {
         changeRoleQuantity,
         updateRoleQuantities,
         startGame,
-        startDay
+        startDay,
+        startNight,
+        endNight,
+        voteOutPlayer,
+        setGameMode
     }
 })()
 

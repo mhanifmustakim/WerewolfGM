@@ -94,10 +94,20 @@ const PlayerInitialReveal = (index) => {
 
     beforeScreen.textContent = `Hand Over Device to ${player.name}: (Click Me!)`;
 
-    const afterScreenHeader = document.createElement("h3");
+    const afterScreenHeader = document.createElement("h2");
     afterScreenHeader.textContent = `You are a ${player.role.name}`;
-
     afterScreen.appendChild(afterScreenHeader);
+
+    if ("onInitialReveal" in player.role) {
+        const bonusInfo = player.role.onInitialReveal();
+        const element = document.createElement("h3");
+        element.innerHTML = bonusInfo.join("<br>");
+        afterScreen.appendChild(element);
+    }
+
+    const description = document.createElement("p");
+    description.innerHTML = player.role.description.join("<br>");
+    afterScreen.appendChild(description);
 
     beforeScreen.addEventListener("click", (e) => {
         let confirmation = confirm(`Confirming identity of: ${player.name}`);
@@ -108,6 +118,32 @@ const PlayerInitialReveal = (index) => {
 
     container.appendChild(beforeScreen);
     return container;
+}
+
+const NightActionForm = (index) => {
+    const display = document.createElement("div");
+
+    return display
+}
+
+
+const RoleQuantitiesDisplay = () => {
+    const display = document.createElement("div");
+    Object.entries(Game.roleQuantities).forEach(([roleIdentifier, count]) => {
+        if (count <= 0) return
+        const role = Roles[roleIdentifier]();
+        const container = document.createElement("div");
+        const roleName = document.createElement("h5");
+        roleName.textContent = role.name + " :";
+        const roleCount = document.createElement("p");
+        roleCount.textContent = count;
+
+        container.appendChild(roleName);
+        container.appendChild(roleCount);
+        display.appendChild(container);
+    })
+
+    return display
 }
 
 const PlayersNodeList = (attr = null) => {
@@ -124,12 +160,32 @@ const PlayersNodeList = (attr = null) => {
     return playersNodeList
 }
 
+const GameOverList = (winner) => {
+    const playerNodes = PlayersNodeList();
+    playerNodes.map((node) => {
+        const playerId = parseInt(node.getAttribute("data-id"))
+        const player = Game.getPlayerById(playerId);
+        if (player.role.team === winner) node.style.color = "red";
+    })
+
+    return playerNodes;
+}
+
 const Buttons = (function () {
     const removePlayerBtn = (id) => {
         const button = document.createElement("button");
         button.setAttribute("data-id", id);
         button.textContent = "X";
         button.addEventListener("click", ViewControl.deletePlayer, { once: true });
+
+        return button;
+    }
+
+    const voteOutBtn = (id) => {
+        const button = document.createElement("button");
+        button.setAttribute("data-id", id);
+        button.textContent = "Vote Out";
+        button.addEventListener("click", ViewControl.voteOutPlayer, { once: true });
 
         return button;
     }
@@ -196,14 +252,33 @@ const Buttons = (function () {
         return button;
     }
 
+    const startNightBtn = () => {
+        const button = document.createElement("button");
+        button.textContent = "Start Night";
+        button.addEventListener("click", ViewControl.startNight);
+
+        return button;
+    }
+
+    const endNightBtn = () => {
+        const button = document.createElement("button");
+        button.textContent = "End Night";
+        button.addEventListener("click", ViewControl.endNight);
+
+        return button;
+    }
+
     return {
         removePlayerBtn,
         transitionBtn,
         selectModeBtn,
         changeRoleQuantityBtn,
         startGameBtn,
-        startDayBtn
+        startDayBtn,
+        voteOutBtn,
+        startNightBtn,
+        endNightBtn
     }
 })()
 
-export { GameTitle, AddPlayerForm, PlayersNodeList, RoleQuantitiesForm, PlayerInitialReveal, Buttons }
+export { GameTitle, AddPlayerForm, PlayersNodeList, RoleQuantitiesForm, PlayerInitialReveal, RoleQuantitiesDisplay, NightActionForm, GameOverList, Buttons }

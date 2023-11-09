@@ -1,9 +1,11 @@
+import Game from './Game';
 import { createRole, attack, rescue } from './RolesUtils'
 
 
 const Roles = {
     citizen: function () {
         const self = createRole({
+            id: "citizen",
             name: "Citizen",
             type: "Human",
             team: "Citizens",
@@ -16,6 +18,7 @@ const Roles = {
 
     werewolf: function () {
         const self = createRole({
+            id: "werewolf",
             name: "Werewolf",
             type: "Werewolf",
             team: "Werewolves",
@@ -25,17 +28,22 @@ const Roles = {
 
         self.inputSpec.min = 1;
         self.attack = (id) => attack(self.name, id);
+        self.onInitialReveal = () => {
+            const werewolfNames = Game.findPlayersByAttr({ type: "Werewolf" }).map((player) => player.name);
+            return ["The werewolves are", werewolfNames.join(", ")];
+        }
 
         return self
     },
 
     doctor: function () {
         const self = createRole({
+            id: "doctor",
             name: "Doctor",
             type: "Human",
             team: "Citizens",
             abilities: { "heal": { isAlive: true, excludeRole: "Doctor" } },
-            description: ["The doctor chooses one player to heal every night (not himself). ", "If that player is attacked, the player lives."],
+            description: ["The doctor chooses one player to heal every night (not himself). ", "If that player is attacked, that player lives."],
         });
 
         self.inputSpec.max = 1;

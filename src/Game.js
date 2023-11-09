@@ -1,3 +1,4 @@
+import Roles from "./Roles";
 import Teams from "./Teams";
 
 const Game = (function () {
@@ -6,11 +7,13 @@ const Game = (function () {
     let dayCount = 0;
     let winner = null;
     let roleQuantities = null;
+    let nightRoles = null;
     let nightActions = null;
 
     const reset = () => {
         players = [];
         roleQuantities = null;
+        nightRoles = null;
     }
 
     const addPlayer = (player) => {
@@ -88,6 +91,8 @@ const Game = (function () {
 
     const setRoleQuantities = (newRoleQuantities) => {
         roleQuantities = newRoleQuantities;
+        nightRoles = Array.from(new Set(Object.keys(roleQuantities)
+            .filter((roleIdentifier) => Roles[roleIdentifier]().abilities !== null)));
     };
 
     const start = () => {
@@ -131,6 +136,7 @@ const Game = (function () {
         // console.log(`Players killed: ${killedIds.map((id) => getPlayerById(id).name)}`);
 
         checkGameOver();
+        return killedIds.map((id) => getPlayerById(id));
     }
 
     return {
@@ -149,9 +155,13 @@ const Game = (function () {
         get dayCount() {
             return dayCount;
         },
+        get nightRoles() {
+            return nightRoles
+        },
         setRoleQuantities,
         addPlayer,
         removePlayerWithId,
+        getPlayerById,
         findPlayersByAttr,
         addAction,
         start,
