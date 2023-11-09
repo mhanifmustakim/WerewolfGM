@@ -14,6 +14,7 @@ const View = (function () {
         newPlayerElements.forEach((playerElement) => {
             const actionButtonContainer = document.createElement("div");
             const playerId = playerElement.getAttribute("data-id");
+            console.log(actionBtnCallback);
             const actionButton = actionBtnCallback(playerId);
             actionButtonContainer.appendChild(actionButton);
 
@@ -27,6 +28,7 @@ const View = (function () {
         const gameTitle = GameTitle();
         const addPlayerForm = AddPlayerForm();
         const playersList = document.createElement("ol");
+        playersList.id = "players-list";
 
         mainDiv.appendChild(gameTitle);
         mainDiv.appendChild(addPlayerForm);
@@ -34,6 +36,7 @@ const View = (function () {
         updatePlayersList(playersList, Buttons.removePlayerBtn);
 
         const nextBtn = Buttons.transitionBtn(displaySelectMode, "Select Game Mode");
+        nextBtn.id = "next-btn";
         mainDiv.appendChild(nextBtn);
     }
 

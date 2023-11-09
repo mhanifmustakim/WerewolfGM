@@ -13,17 +13,21 @@ const ViewControl = (function () {
 
         const playerName = document.querySelector("#player-name").value;
         const player = Player(playerName);
+        const playerList = document.querySelector("#players-list");
         Game.addPlayer(player);
-        View.updatePlayersList(Buttons.removePlayerBtn);
+        View.updatePlayersList(playerList, Buttons.removePlayerBtn);
 
         document.querySelector("#player-name").value = "";
+        if (Game.players.length >= 3) document.querySelector("#next-btn").disabled = false;
     };
 
     const deletePlayer = (e) => {
+        const playerList = document.querySelector("#players-list");
         const targetId = parseInt(e.target.getAttribute("data-id"));
         Game.removePlayerWithId(targetId);
 
-        View.updatePlayersList(Buttons.removePlayerBtn);
+        View.updatePlayersList(playerList, Buttons.removePlayerBtn);
+        if (Game.players.length < 3) document.querySelector("#next-btn").disabled = true;
     };
 
     const selectGameMode = (e) => {
