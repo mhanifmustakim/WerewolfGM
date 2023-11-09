@@ -1,5 +1,5 @@
 import Game from './Game';
-import { createRole, attack, rescue } from './RolesUtils'
+import { createRole, actionAttack, actionRescue } from './RolesUtils'
 
 
 const Roles = {
@@ -27,7 +27,10 @@ const Roles = {
         });
 
         self.inputSpec.min = 1;
-        self.attack = (id) => attack(self.name, id);
+        self.attack = (id) => {
+            actionAttack(self.name, id)
+            return true
+        };
         self.onInitialReveal = () => {
             const werewolfNames = Game.findPlayersByAttr({ type: "Werewolf" }).map((player) => player.name);
             return ["The werewolves are", werewolfNames.join(", ")];
@@ -47,7 +50,10 @@ const Roles = {
         });
 
         self.inputSpec.max = 1;
-        self.heal = (id) => rescue(self.name, id);
+        self.heal = (id) => {
+            actionRescue(self.name, id);
+            return true;
+        };
 
         return self
     }

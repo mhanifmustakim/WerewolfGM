@@ -118,8 +118,26 @@ const ViewControl = (function () {
     }
 
     const endNight = (e) => {
-        const killedPlayers = Game.endNight();
-        View.displayNightResults(killedPlayers.join(", "));
+        const killedPlayersNames = Game.endNight().map((player) => player.name);
+        View.displayNightResults(killedPlayersNames.join(", "));
+    }
+
+    const handleNightAction = (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = Object.fromEntries(new FormData(e.target));
+        let canContinue = false;
+        Object.entries(formData).forEach(([inputName, value]) => {
+            inputName = inputName.split("-");
+            const roleIdentifier = inputName[0];
+            const abilityName = inputName[1];
+            const role = Roles[roleIdentifier]();
+            canContinue = role[abilityName](value);
+        });
+
+        form.querySelectorAll("input").forEach((input) => input.disabled = true);
+        e.submitter.disabled = true;
+        document.querySelector("#next-btn").disabled = !canContinue;
     }
 
     return {
@@ -133,7 +151,8 @@ const ViewControl = (function () {
         startNight,
         endNight,
         voteOutPlayer,
-        setGameMode
+        setGameMode,
+        handleNightAction
     }
 })()
 

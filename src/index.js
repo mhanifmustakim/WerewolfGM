@@ -1,11 +1,11 @@
 import Test from "./GameTests";
 import View from "./View";
 
-let numPlayers = 10;
+let numPlayers = 5;
 
 const roleQuantities = {
-    "citizen": 6,
-    "werewolf": 3,
+    "citizen": 3,
+    "werewolf": 1,
     "doctor": 1
 };
 

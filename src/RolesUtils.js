@@ -32,12 +32,12 @@ const createRole = ({ id, name, type, team, abilities, description }) => {
     };
 };
 
-const attack = (attackerName, victimId) => {
+const actionAttack = (attackerName, victimId) => {
     Game.addAction(attackerName, { "attacked": victimId })
 }
 
-const rescue = (protectorName, protectedId) => {
+const actionRescue = (protectorName, protectedId) => {
     Game.addAction(protectorName, { "rescued": protectedId })
 }
 
-export { createRole, attack, rescue }
+export { createRole, actionAttack, actionRescue }

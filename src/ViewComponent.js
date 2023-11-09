@@ -121,9 +121,46 @@ const PlayerInitialReveal = (index) => {
 }
 
 const NightActionForm = (index) => {
-    const display = document.createElement("div");
+    const container = document.createElement("div");
+    const roleIdentifier = Game.nightRoles[index];
+    const role = Roles[roleIdentifier]();
 
-    return display
+    Object.entries(role.abilities).forEach(([abilityName, targetAttr]) => {
+        const form = document.createElement("form");
+        const actionButton = Buttons.actionBtn(abilityName);
+        const possibleTargets = Game.findPlayersByAttr(targetAttr);
+        possibleTargets.forEach((player) => {
+            const formGroup = document.createElement("div");
+            const inputId = abilityName + "-" + player.id;
+            const inputName = roleIdentifier + "-" + abilityName;
+            const label = document.createElement("label");
+            label.textContent = player.name;
+            label.htmlFor = inputId;
+            const input = document.createElement("input");
+            input.required = true;
+            input.type = "radio";
+            input.id = inputId;
+            input.name = inputName;
+            input.value = player.id;
+
+            formGroup.appendChild(input);
+            formGroup.appendChild(label);
+            form.appendChild(formGroup);
+        });
+
+        form.addEventListener("submit", ViewControl.handleNightAction);
+        form.appendChild(actionButton);
+
+        const confirmation = document.createElement("h2");
+        confirmation.textContent = `Players with role of ${role.name}, Open Your Eyes. (Click Me!)`;
+        confirmation.addEventListener("click", (e) => {
+            if (confirm("Start night action of role: " + role.name)) confirmation.replaceWith(form);
+        })
+
+        container.appendChild(confirmation);
+    })
+
+    return container
 }
 
 
@@ -186,6 +223,14 @@ const Buttons = (function () {
         button.setAttribute("data-id", id);
         button.textContent = "Vote Out";
         button.addEventListener("click", ViewControl.voteOutPlayer, { once: true });
+
+        return button;
+    }
+
+    const actionBtn = (abilityName) => {
+        const button = document.createElement("button");
+        button.type = "submit";
+        button.textContent = abilityName;
 
         return button;
     }
@@ -273,6 +318,7 @@ const Buttons = (function () {
         transitionBtn,
         selectModeBtn,
         changeRoleQuantityBtn,
+        actionBtn,
         startGameBtn,
         startDayBtn,
         voteOutBtn,

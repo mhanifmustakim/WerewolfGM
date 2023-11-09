@@ -117,7 +117,7 @@ const View = (function () {
         const gameTitle = GameTitle();
         const container = document.createElement("div");
 
-        const nightActionForm = NightActionForm();
+        const nightActionForm = NightActionForm(index);
 
         container.appendChild(nightActionForm);
         mainDiv.appendChild(gameTitle);
@@ -130,6 +130,8 @@ const View = (function () {
             nextBtn = Buttons.endNightBtn();
         }
 
+        nextBtn.id = "next-btn";
+        nextBtn.disabled = true;
         mainDiv.appendChild(nextBtn);
     }
 
