@@ -2,7 +2,7 @@ import Game from "./Game";
 import Player from "./Player";
 import Roles from "./Roles";
 import View from "./View";
-import { Buttons } from "./ViewComponent";
+import { Buttons, NightActionForm } from "./ViewComponent";
 
 const ViewControl = (function () {
     let gameMode = null;
@@ -117,7 +117,7 @@ const ViewControl = (function () {
             View.displayGameOver();
         } else {
             Game.startNight();
-            View.displayNightActionRoles();
+            View.displayStartingNightPhase();
         }
     }
 
@@ -136,12 +136,25 @@ const ViewControl = (function () {
             const roleIdentifier = inputName[0];
             const abilityName = inputName[1];
             const role = Roles[roleIdentifier]();
-            canContinue = role[abilityName](value);
+            const playerInstanceOfRole = Game.findPlayersByAttr({ roleName: role.name })[0]
+            canContinue = playerInstanceOfRole.role[abilityName](value);
         });
 
         form.querySelectorAll("input").forEach((input) => input.disabled = true);
         e.submitter.disabled = true;
         document.querySelector("#next-btn").disabled = !canContinue;
+    }
+
+    const checkNightActionForm = (NightActionForm, nightRoleIndex) => {
+        const roleIdentifier = Game.nightRoles[nightRoleIndex];
+        const roleName = Roles[roleIdentifier]().name;
+        const playerWithRole = Game.findPlayersByAttr({ roleName: roleName })[0]; // Assumes there is only one player of this role
+        // console.log(playerWithRole.role.abilityUse);
+        if (playerWithRole.role.abilityUse <= 0 || !playerWithRole.isAlive) {
+            NightActionForm.querySelectorAll("input").forEach((input) => input.disabled = true);
+            NightActionForm.querySelector("button").disabled = true;
+            document.querySelector("#next-btn").disabled = false;
+        }
     }
 
     return {
@@ -156,7 +169,8 @@ const ViewControl = (function () {
         endNight,
         voteOutPlayer,
         setGameMode,
-        handleNightAction
+        handleNightAction,
+        checkNightActionForm
     }
 })()
 

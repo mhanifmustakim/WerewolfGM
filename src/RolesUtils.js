@@ -7,6 +7,8 @@ const createRole = ({ id, name, type, team, abilities, description }) => {
         step: 1
     }
 
+    let abilityUse = Infinity;
+
     return {
         get id() {
             return id;
@@ -28,7 +30,8 @@ const createRole = ({ id, name, type, team, abilities, description }) => {
         },
         get inputSpec() {
             return inputSpec;
-        }
+        },
+        abilityUse
     };
 };
 

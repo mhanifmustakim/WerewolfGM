@@ -135,6 +135,8 @@ const View = (function () {
         nextBtn.id = "next-btn";
         nextBtn.disabled = true;
         mainDiv.appendChild(nextBtn);
+
+        ViewControl.checkNightActionForm(nightActionForm, index);
     }
 
     const displayDay = () => {
@@ -188,7 +190,22 @@ const View = (function () {
         const votedOutSpan = container.querySelector("#voted-out");
         votedOutSpan.textContent = votedOutName;
 
-        const startNightBtn = Buttons.startNightBtn();
+        const nextBtn = Buttons.checkContinueToNightBtn();
+        mainDiv.appendChild(nextBtn);
+    }
+
+    const displayStartingNightPhase = () => {
+        clear(mainDiv);
+        const gameTitle = GameTitle();
+        const container = document.createElement("div");
+        const header = document.createElement("h3");
+        header.textContent = "The night has come. Everyone close your eyes!";
+
+        container.appendChild(header);
+        mainDiv.appendChild(gameTitle);
+        mainDiv.appendChild(container);
+
+        const startNightBtn = Buttons.transitionBtn(displayNightActionRoles.bind(window, 0), "Start Night");
         mainDiv.appendChild(startNightBtn);
     }
 
@@ -240,6 +257,7 @@ const View = (function () {
         displaySelectRoleQuantities,
         displayInitialPlayerRoles,
         displayNightActionRoles,
+        displayStartingNightPhase,
         displayDay,
         displayVoteResults,
         displayNightResults,

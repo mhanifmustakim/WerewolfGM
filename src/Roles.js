@@ -56,6 +56,64 @@ const Roles = {
         };
 
         return self
+    },
+
+    lover: function () {
+        const self = createRole({
+            id: "lover",
+            name: "Lovers",
+            type: "Human",
+            team: "Citizens",
+            abilities: null,
+            description: ["You truly love each other.", "If one is killed at night, the other one dies out of sorrow."]
+        });
+
+        self.inputSpec.max = 2;
+        self.inputSpec.step = 2;
+
+        self.onInitialReveal = () => {
+            const loverNames = Game.findPlayersByAttr({ roleName: self.name }).map((player) => player.name);
+            return ["The lovers are", loverNames.join(" & ")];
+        }
+
+        self.onKilledAtNight = () => {
+            const lovers = Game.findPlayersByAttr({ roleName: self.name, isAlive: true });
+            return {
+                kill: lovers.map((loverPlayer) => loverPlayer.id)
+            }
+        }
+
+        return self
+    },
+
+    bodyguard: function () {
+        const self = createRole({
+            id: "bodyguard",
+            name: "Bodyguard",
+            type: "Human",
+            team: "Citizens",
+            abilities: { "guard": { isAlive: true, excludeRole: "Bodyguard" } },
+            description: ["You are a strong bodyguard.", "You can choose one player to protect every night.", "You can only survive one attack per game", "(You automatically protect yourself every night)"]
+        });
+
+        self.abilityUse = 1;
+        self.inputSpec.max = 1;
+        self.guard = (id) => {
+            actionRescue(self.name, id);
+            return true;
+        };
+
+        self.onKilledAtNight = () => {
+            const playerId = Game.findPlayersByAttr({ roleName: self.name })[0].id;
+            if (self.abilityUse > 0) {
+                self.abilityUse -= 1;
+                return { save: [playerId] }
+            }
+
+            return { kill: [playerId] }
+        }
+
+        return self
     }
 }
 

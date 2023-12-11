@@ -92,7 +92,8 @@ const Game = (function () {
     const setRoleQuantities = (newRoleQuantities) => {
         roleQuantities = newRoleQuantities;
         nightRoles = Array.from(new Set(Object.keys(roleQuantities)
-            .filter((roleIdentifier) => Roles[roleIdentifier]().abilities !== null)));
+            .filter((roleIdentifier) => Roles[roleIdentifier]().abilities !== null)))
+            .filter((roleIdentifier) => roleQuantities[roleIdentifier] > 0);
     };
 
     const start = () => {
@@ -131,12 +132,46 @@ const Game = (function () {
             })
         })
 
-        const killedIds = Array.from(attacked).filter((id) => !rescued.has(id));
-        killedIds.forEach((id) => getPlayerById(id).die());
+        const killedIds = Array.from(attacked).filter((id) => !rescued.has(id)).map((id) => parseInt(id));
+        const rescuedIds = Array.from(attacked).filter((id) => rescued.has(id)).map((id) => parseInt(id));
+
+        killedIds.forEach((id) => {
+            const player = getPlayerById(id);
+            if ("onKilledAtNight" in player.role) {
+                const results = player.role.onKilledAtNight();
+                Object.entries(results).forEach(([result, ids]) => {
+                    switch (result) {
+                        case "kill":
+                            ids.forEach((resultId) => {
+                                killedIds.push(resultId);
+                                Game.getPlayerById(resultId).die();
+                            })
+                            break;
+                        case "save":
+                            ids.forEach((resultId) => {
+                                const index = killedIds.indexOf(resultId);
+                                killedIds.splice(index, 1);
+                            })
+                            break;
+                    }
+                })
+            } else {
+                player.die()
+            }
+        });
         // console.log(`Players killed: ${killedIds.map((id) => getPlayerById(id).name)}`);
 
+        rescuedIds.forEach((id) => {
+            Object.entries(nightActions).forEach(([role, actions]) => {
+                Object.entries(actions).forEach(([key, targetId]) => {
+                    if (key == "rescued" && targetId == id) {
+                        Game.findPlayersByAttr({ roleName: role, isAlive: true }).forEach((player) => player.role.abilityUse -= 1)
+                    }
+                })
+            })
+        })
         checkGameOver();
-        return killedIds.map((id) => getPlayerById(id));
+        return Array.from(new Set(killedIds)).map((id) => getPlayerById(id));
     }
 
     return {

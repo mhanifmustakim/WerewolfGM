@@ -50,7 +50,7 @@ const Test = (function () {
         console.log(counts);
     }
 
-    const cycleTest = (numPlayers, roleQuantities) => {
+    const cycleTest = (numPlayers, roleQuantities, noVoteAtFirstDay = true) => {
         Game.reset();
 
         generatePlayers(numPlayers);
@@ -63,10 +63,14 @@ const Test = (function () {
 
         while (!Game.isGameOver) {
             // Start Day cycle
-            const voteCandidates = Game.findPlayersByAttr({ isAlive: true });
-            const playerVotedOut = chooseRandom(voteCandidates);
-            // console.log(`${playerVotedOut.name} has been voted out.`);
-            Game.voteOut(playerVotedOut.id);
+            if (noVoteAtFirstDay) {
+                noVoteAtFirstDay = false;
+            } else {
+                const voteCandidates = Game.findPlayersByAttr({ isAlive: true });
+                const playerVotedOut = chooseRandom(voteCandidates);
+                // console.log(`${playerVotedOut.name} has been voted out.`);
+                Game.voteOut(playerVotedOut.id);
+            }
 
             if (Game.isGameOver) break
 

@@ -125,6 +125,14 @@ const NightActionForm = (index) => {
     const roleIdentifier = Game.nightRoles[index];
     const role = Roles[roleIdentifier]();
 
+    const roleInfo = document.createElement("div");
+    const header = document.createElement("h3");
+    header.textContent = "Night Action for role: " + role.name;
+    const desc = document.createElement("p");
+    desc.innerHTML = role.description.join("<br>");
+    roleInfo.appendChild(header);
+    roleInfo.appendChild(desc);
+
     Object.entries(role.abilities).forEach(([abilityName, targetAttr]) => {
         const form = document.createElement("form");
         const actionButton = Buttons.actionBtn(abilityName);
@@ -151,13 +159,15 @@ const NightActionForm = (index) => {
         form.addEventListener("submit", ViewControl.handleNightAction);
         form.appendChild(actionButton);
 
-        const confirmation = document.createElement("h2");
-        confirmation.textContent = `Players with role of ${role.name}, Open Your Eyes. (Click Me!)`;
-        confirmation.addEventListener("click", (e) => {
-            if (confirm("Start night action of role: " + role.name)) confirmation.replaceWith(form);
-        })
+        // const confirmation = document.createElement("h2");
+        // confirmation.textContent = `Players with role of ${role.name}, Open Your Eyes. (Click Me!)`;
+        // confirmation.addEventListener("click", (e) => {
+        //     if (confirm("Start night action of role: " + role.name)) confirmation.replaceWith(form);
+        //     ViewControl.checkNightActionForm(form, index);
+        // })
 
-        container.appendChild(confirmation);
+        container.appendChild(roleInfo);
+        container.appendChild(form);
     })
 
     return container
@@ -202,6 +212,7 @@ const GameOverList = (winner) => {
     playerNodes.map((node) => {
         const playerId = parseInt(node.getAttribute("data-id"))
         const player = Game.getPlayerById(playerId);
+        node.textContent += ` (${player.role.name})`;
         if (player.role.team === winner) node.style.color = "red";
     })
 
@@ -297,7 +308,7 @@ const Buttons = (function () {
         return button;
     }
 
-    const startNightBtn = () => {
+    const checkContinueToNightBtn = () => {
         const button = document.createElement("button");
         button.textContent = "Start Night";
         button.addEventListener("click", ViewControl.startNight);
@@ -322,7 +333,7 @@ const Buttons = (function () {
         startGameBtn,
         startDayBtn,
         voteOutBtn,
-        startNightBtn,
+        checkContinueToNightBtn,
         endNightBtn
     }
 })()
