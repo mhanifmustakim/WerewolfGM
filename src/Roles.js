@@ -114,6 +114,41 @@ const Roles = {
         }
 
         return self
+    },
+
+    assassin: function () {
+        const self = createRole({
+            id: "assassin",
+            name: "Assassin",
+            type: "Human",
+            team: "Citizens",
+            abilities: { "kill": { isAlive: true, excludeRole: "Assassin" } },
+            description: ["At night, you can choose one player to assassinate throughout the game."]
+        });
+
+        self.abilityUse = 1;
+        self.inputSpec.max = 1;
+
+        self.kill = (id) => {
+            self.abilityUse -= 1;
+            actionAttack(self.name, id);
+            return true;
+        }
+
+        return self
+    },
+
+    psycho: function () {
+        const self = createRole({
+            id: "psycho",
+            name: "Psycho",
+            type: "Human",
+            team: "Werewolves",
+            abilities: null,
+            description: ["You are a maniac. You want the werewolves to win.", "You have no special abilities"]
+        });
+
+        return self
     }
 }
 

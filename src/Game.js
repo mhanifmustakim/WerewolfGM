@@ -64,7 +64,7 @@ const Game = (function () {
     };
 
     const checkGameOver = () => {
-        const teams = Array.from(new Set(findPlayersByAttr({ isAlive: true }).map((player) => player.role.team)));
+        const teams = Array.from(new Set(players.map((player) => player.role.team)));
         teams.forEach((team) => {
             if (Teams[team].checkWinCondition()) {
                 winner = team;
