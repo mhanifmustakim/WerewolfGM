@@ -5,7 +5,10 @@ import Game from "./Game";
 const View = (function () {
     const mainDiv = document.querySelector("#main");
 
-    const clear = (container) => container.innerHTML = "";
+    const clear = (container) => {
+        container.innerHTML = "";
+        container.classList.forEach((className) => container.classList.remove(className));
+    };
 
     const updatePlayersList = (playersList, actionBtnCallback, attr = null) => {
         const newPlayerElements = PlayersNodeList(attr);
@@ -26,11 +29,14 @@ const View = (function () {
         clear(mainDiv);
         const gameTitle = GameTitle();
         const addPlayerForm = AddPlayerForm();
+        const playersListHeader = document.createElement("h3");
+        playersListHeader.textContent = "Current Players: ";
         const playersList = document.createElement("ol");
         playersList.id = "players-list";
 
         mainDiv.appendChild(gameTitle);
         mainDiv.appendChild(addPlayerForm);
+        mainDiv.appendChild(playersListHeader);
         mainDiv.appendChild(playersList);
         updatePlayersList(playersList, Buttons.removePlayerBtn);
 
@@ -43,6 +49,9 @@ const View = (function () {
         clear(mainDiv);
         const gameTitle = GameTitle();
         const container = document.createElement("div");
+        container.id = "select-game-mode";
+        container.classList.add("text-center");
+
         const modeSelectionTitle = document.createElement("h3");
         const modeSelectionButtons = document.createElement("div");
         const handOverModeBtn = Buttons.selectModeBtn("handOver");
@@ -71,8 +80,10 @@ const View = (function () {
 
         const headerTitle = document.createElement("h4");
         headerTitle.textContent = "Select Quantities of each Role: ";
+        headerTitle.classList.add("text-center");
         const headerInfo = document.createElement("p");
         headerInfo.innerHTML = `Amount unallocated: <span id="amountUnallocated"></span>`;
+        headerInfo.classList.add("text-center");
         header.appendChild(headerTitle);
         header.appendChild(headerInfo);
 
@@ -95,8 +106,12 @@ const View = (function () {
 
     const displayInitialPlayerRoles = (index = 0) => {
         clear(mainDiv);
+        mainDiv.classList.add("focus-view");
+
         const gameTitle = GameTitle();
         const container = document.createElement("div");
+        container.classList.add("text-center");
+        container.classList.add("text-xl");
 
         const playerRoleDisplay = PlayerInitialReveal(index);
 
@@ -165,6 +180,7 @@ const View = (function () {
         header.textContent = "Point your finger towards the most suspiscious player. In 3, 2, 1!";
 
         const votingList = document.createElement("div");
+        votingList.id = "player-list";
         updatePlayersList(votingList, Buttons.voteOutBtn, { isAlive: true });
 
         container.appendChild(header);
@@ -188,6 +204,7 @@ const View = (function () {
         mainDiv.appendChild(container);
 
         const votedOutSpan = container.querySelector("#voted-out");
+        votedOutSpan.classList.add("text-warning");
         votedOutSpan.textContent = votedOutName;
 
         const nextBtn = Buttons.checkContinueToNightBtn();

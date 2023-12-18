@@ -24,7 +24,7 @@
 
 :root {
     font-family: Lacquer;
-    font-size: 24px;
+    font-size: 12px;
     color: black;
 }
 
@@ -35,132 +35,99 @@ body {
     background-position: center;
 }
 
+input {
+    padding: 0 0.5em;
+    margin: 0 0.5em;
+    border-radius: 0.5em;
+}
+
 button {
     padding: 0 0.5em;
     margin: 0 0.5em;
     border-radius: 0.5em;
 }
 
-#main {
-    width: 70vw;
-    margin: 1rem auto;
+.player-list-item {
     display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
+    justify-content: space-between;
 }
 
-#main-title {
-    height: 12rem;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
-    gap: 1em;
-}
-
-#action-screen {
-    min-height: 100vh;
-    padding: 3em 2em;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    gap: 2em;
-}
-
-#players-list {
-    height: 35vh;
-    overflow: auto;
-}
-
-#add-player-form {
-    display: grid;
-    place-items: center;
-    gap: 0.2em;
-}
-
-input#player-name {
-    border-radius: 0.2em;
+.select-mode-btn {
+    width: 25rem;
 }
 
 .role-input-group {
     display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 0.5em;
+    grid-template-columns: 1fr auto auto auto auto;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
 }
 
-.role-input-group>input {
-    width: 3ch;
-    text-align: right;
+.role-input-group>button {
+    width: 3rem;
 }
 
-.vote-list {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.5em;
+.spaced-vertical>* {
+    margin: 0.5em 0;
 }
 
-.role-action-container {
-    height: 100%;
-    align-items: center;
-}
-
-.role-action {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 0.5em;
-}
-
-.spaced-vertical {
-    margin: 1em 0;
-}
-
-.scary-text {
-    font-family: Creepster;
-}
-
-.text-l {
-    font-size: 1.5rem;
-}
-
-.text-xl {
-    font-size: 3rem;
+.text-warning {
+    color: red;
 }
 
 .text-center {
     text-align: center;
 }
 
-.text-red {
-    color: crimson;
+.text-m {
+    font-size: 1rem;
 }
 
-.center {
-    height: 100vh;
+.text-l {
+    font-size: 1.75rem;
+}
+
+.text-xl {
+    font-size: 2.5rem;
+}
+
+#main {
+    padding: 1rem 0;
+    margin: 0 auto;
     display: flex;
-    flex-flow: column nowrap;
-    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
     align-items: center;
-}
-
-.center-x {
-    display: flex;
     justify-content: center;
 }
 
-.flex-column {
-    display: flex;
-    flex-flow: column nowrap;
+#main.focus-view {
+    display: grid;
+    place-items: center;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
 }
 
-.focus-view {
+#main-title {
     font-size: 3rem;
-    height: 80vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    text-align: center;
 }
 
-.focus-view>* {
-    font-size: 0.5em;
-    text-align: center;
+#add-player-form {
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+
+#select-game-mode,
+#select-game-mode>* {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+#players-list {
+    display: flex;
+    width: 70%;
+    flex-direction: column;
 }

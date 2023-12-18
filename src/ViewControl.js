@@ -170,6 +170,8 @@ const ViewControl = (function () {
     const replaceNightActionForm = (texts) => {
         const nightActionFormContainer = document.querySelector("#night-action-form");
         nightActionFormContainer.innerHTML = "";
+        nightActionFormContainer.classList.add("text-xl");
+        nightActionFormContainer.classList.add("text-center");
 
         texts.forEach((text) => {
             const element = document.createElement("h4");

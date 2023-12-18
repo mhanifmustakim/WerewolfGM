@@ -4,6 +4,7 @@ import ViewControl from "./ViewControl";
 
 const GameTitle = () => {
     const titleContainer = document.createElement("div");
+    titleContainer.id = "main-title";
 
     const mainTitle = document.createElement("h1");
     mainTitle.textContent = "The Werewolf Game";
@@ -14,6 +15,7 @@ const GameTitle = () => {
 
 const AddPlayerForm = () => {
     const form = document.createElement("form");
+    form.id = "add-player-form";
 
     const input = document.createElement("input");
     input.id = "player-name";
@@ -92,9 +94,10 @@ const PlayerInitialReveal = (index) => {
     const container = document.createElement("div");
     const beforeScreen = document.createElement("h3");
     const afterScreen = document.createElement("div");
+    afterScreen.classList.add("spaced-vertical");
     const player = Game.players[index];
 
-    beforeScreen.innerHTML = `Hand Over Device to ${player.name}:<br> (Click Me!)`;
+    beforeScreen.innerHTML = `Hand Over Device to <br>${player.name}<br> (Click Me!)`;
 
     const afterScreenHeader = document.createElement("h2");
     afterScreenHeader.textContent = `You are a ${player.role.name}`;
@@ -103,11 +106,13 @@ const PlayerInitialReveal = (index) => {
     if ("onInitialReveal" in player.role) {
         const bonusInfo = player.role.onInitialReveal();
         const element = document.createElement("h3");
+        element.classList.add("text-l");
         element.innerHTML = bonusInfo.join("<br>");
         afterScreen.appendChild(element);
     }
 
     const description = document.createElement("p");
+    description.classList.add("text-m");
     description.innerHTML = player.role.description.join("<br>");
     afterScreen.appendChild(description);
 
@@ -196,6 +201,7 @@ const PlayersNodeList = (attr = null) => {
 
     players.forEach((player) => {
         const playerElement = document.createElement("li");
+        playerElement.classList.add("player-list-item");
         playerElement.textContent = player.name;
         playerElement.setAttribute("data-id", player.id);
         playersNodeList.push(playerElement);
@@ -264,9 +270,11 @@ const Buttons = (function () {
 
         const header = document.createElement("h4");
         header.textContent = info[gameMode]["header"];
+        header.classList.add("text-bold");
         const desc = document.createElement("p");
         desc.textContent = info[gameMode]["description"];
 
+        button.classList.add("select-mode-btn");
         button.appendChild(header);
         button.appendChild(desc);
         button.addEventListener("click", ViewControl.selectGameMode, true);
