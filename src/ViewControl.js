@@ -142,19 +142,40 @@ const ViewControl = (function () {
 
         form.querySelectorAll("input").forEach((input) => input.disabled = true);
         e.submitter.disabled = true;
-        document.querySelector("#next-btn").disabled = !canContinue;
+        const nextBtn = document.querySelector("#next-btn");
+        nextBtn.disabled = !canContinue;
+
+        if (form.querySelectorAll("input").length == 0) {
+            // Handle case where there is no eligible target
+            nextBtn.disabled = false;
+        }
     }
 
     const checkNightActionForm = (NightActionForm, nightRoleIndex) => {
         const roleIdentifier = Game.nightRoles[nightRoleIndex];
-        const roleName = Roles[roleIdentifier]().name;
-        const playerWithRole = Game.findPlayersByAttr({ roleName: roleName })[0]; // Assumes there is only one player of this role
+        const role = Roles[roleIdentifier]();
+        const playerWithRole = Game.findPlayersByAttr({ roleName: role.name })[0]; // Assumes there is only one player of this role
         // console.log(playerWithRole.role.abilityUse);
         if (playerWithRole.role.abilityUse <= 0 || !playerWithRole.isAlive) {
             NightActionForm.querySelectorAll("input").forEach((input) => input.disabled = true);
             NightActionForm.querySelector("button").disabled = true;
             document.querySelector("#next-btn").disabled = false;
         }
+
+        if (playerWithRole.role.abilityUse < Infinity) {
+            document.querySelector("#next-btn").disabled = false;
+        }
+    }
+
+    const replaceNightActionForm = (texts) => {
+        const nightActionFormContainer = document.querySelector("#night-action-form");
+        nightActionFormContainer.innerHTML = "";
+
+        texts.forEach((text) => {
+            const element = document.createElement("h4");
+            element.textContent = text;
+            nightActionFormContainer.appendChild(element);
+        })
     }
 
     return {
@@ -170,7 +191,8 @@ const ViewControl = (function () {
         voteOutPlayer,
         setGameMode,
         handleNightAction,
-        checkNightActionForm
+        checkNightActionForm,
+        replaceNightActionForm
     }
 })()
 

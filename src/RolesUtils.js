@@ -1,4 +1,5 @@
 import Game from "./Game";
+import ViewControl from "./ViewControl";
 
 const createRole = ({ id, name, type, team, abilities, description }) => {
     const inputSpec = {
@@ -8,6 +9,10 @@ const createRole = ({ id, name, type, team, abilities, description }) => {
     }
 
     let abilityUse = Infinity;
+
+    const setTeam = (newTeam) => {
+        team = newTeam;
+    }
 
     return {
         get id() {
@@ -31,16 +36,32 @@ const createRole = ({ id, name, type, team, abilities, description }) => {
         get inputSpec() {
             return inputSpec;
         },
-        abilityUse
+        abilityUse,
+        setTeam
     };
 };
 
 const actionAttack = (attackerName, victimId) => {
-    Game.addAction(attackerName, { "attacked": victimId })
+    Game.addAction(attackerName, { "attacked": victimId });
 }
 
 const actionRescue = (protectorName, protectedId) => {
-    Game.addAction(protectorName, { "rescued": protectedId })
+    Game.addAction(protectorName, { "rescued": protectedId });
 }
 
-export { createRole, actionAttack, actionRescue }
+const actionReveal = (revealerName, revealedId) => {
+    Game.addAction(revealerName, { "revealed": revealedId });
+    const player = Game.getPlayerById(revealedId);
+
+    if (document.querySelector("#night-action-form")) {
+        // Only used when not in simulations
+        ViewControl.replaceNightActionForm([`${player.name} is a ${player.role.name}.`]);
+    }
+}
+
+const chooseRandom = (arr) => {
+    const randomIndex = Math.floor(Math.random() * arr.length);
+    return arr[randomIndex];
+};
+
+export { createRole, actionAttack, actionRescue, actionReveal, chooseRandom }

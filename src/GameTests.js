@@ -82,8 +82,10 @@ const Test = (function () {
                 if (Game.findPlayersByAttr({ roleName: role.name, isAlive: true }).length > 0) {
                     Object.entries(role.abilities).forEach(([ability, targetAttr]) => {
                         const targetCandidates = Game.findPlayersByAttr(targetAttr);
-                        const randomTarget = chooseRandom(targetCandidates);
-                        role[ability](randomTarget.id);
+                        if (targetCandidates.length > 0) {
+                            const randomTarget = chooseRandom(targetCandidates);
+                            role[ability](randomTarget.id);
+                        }
 
                         // console.log(`${role.name}: ${ability} ${randomTarget.name}`);
                     })

@@ -44,8 +44,10 @@ const RoleQuantitiesForm = () => {
 
     // Handle deletion of players
     let total = Game.players.length;
-    Object.values(Game.roleQuantities).forEach((value) => total -= value);
-    if (total < 0) Game.setRoleQuantities(null);
+    if (Game.roleQuantities != null) {
+        Object.values(Game.roleQuantities).forEach((value) => total -= value);
+        if (total < 0) Game.setRoleQuantities(null);
+    }
 
     Object.keys(Roles).forEach((roleIdentifier) => {
         const formGroup = document.createElement("div");
@@ -92,7 +94,7 @@ const PlayerInitialReveal = (index) => {
     const afterScreen = document.createElement("div");
     const player = Game.players[index];
 
-    beforeScreen.textContent = `Hand Over Device to ${player.name}: (Click Me!)`;
+    beforeScreen.innerHTML = `Hand Over Device to ${player.name}:<br> (Click Me!)`;
 
     const afterScreenHeader = document.createElement("h2");
     afterScreenHeader.textContent = `You are a ${player.role.name}`;
@@ -135,6 +137,8 @@ const NightActionForm = (index) => {
 
     Object.entries(role.abilities).forEach(([abilityName, targetAttr]) => {
         const form = document.createElement("form");
+        form.id = "night-action-form";
+
         const actionButton = Buttons.actionBtn(abilityName);
         const possibleTargets = Game.findPlayersByAttr(targetAttr);
         possibleTargets.forEach((player) => {
@@ -158,13 +162,6 @@ const NightActionForm = (index) => {
 
         form.addEventListener("submit", ViewControl.handleNightAction);
         form.appendChild(actionButton);
-
-        // const confirmation = document.createElement("h2");
-        // confirmation.textContent = `Players with role of ${role.name}, Open Your Eyes. (Click Me!)`;
-        // confirmation.addEventListener("click", (e) => {
-        //     if (confirm("Start night action of role: " + role.name)) confirmation.replaceWith(form);
-        //     ViewControl.checkNightActionForm(form, index);
-        // })
 
         container.appendChild(roleInfo);
         container.appendChild(form);
@@ -213,6 +210,10 @@ const GameOverList = (winner) => {
         const playerId = parseInt(node.getAttribute("data-id"))
         const player = Game.getPlayerById(playerId);
         node.textContent += ` (${player.role.name})`;
+        if ("onDisplayGameOverList" in player.role) {
+            node.textContent += " " + player.role.onDisplayGameOverList();
+        }
+
         if (player.role.team === winner) node.style.color = "red";
     })
 

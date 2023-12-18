@@ -9,6 +9,7 @@ const Game = (function () {
     let roleQuantities = null;
     let nightRoles = null;
     let nightActions = null;
+    let log = [];
 
     const reset = () => {
         players = [];
@@ -39,7 +40,7 @@ const Game = (function () {
             Object.entries(attr).forEach(([key, value]) => {
                 // Exclude certain roles
                 if (key == "excludeRole") {
-                    if (value == player.roleName) {
+                    if (player.roleName == value || new Set(value).has(player.role.name)) {
                         targetFlag = false;
                     }
                 } else { // Normal attribute of player
@@ -60,8 +61,25 @@ const Game = (function () {
     const voteOut = (playerId) => {
         const player = getPlayerById(playerId);
         player.die();
+        log.push({ "Citizens": { "voted": playerId } });
         checkGameOver();
     };
+
+    const displayLog = () => {
+        let phaseCount = 1;
+        console.log("====== NEW GAME ======")
+        log.forEach((actionLog) => {
+            console.log(`START OF PHASE ${phaseCount}`);
+            Object.entries(actionLog).forEach(([roleName, actions]) => {
+                Object.entries(actions).forEach(([action, targetId]) => {
+                    console.log(`${roleName} ${action} ${getPlayerById(targetId).name}`)
+                })
+            })
+            phaseCount += 1;
+        })
+
+        console.log("====== END GAME ======")
+    }
 
     const checkGameOver = () => {
         const teams = Array.from(new Set(players.map((player) => player.role.team)));
@@ -69,6 +87,8 @@ const Game = (function () {
             if (Teams[team].checkWinCondition()) {
                 winner = team;
                 isGameOver = true;
+                displayLog();
+                log = [];
                 // console.log(winner + " won!");
             }
         })
@@ -86,6 +106,13 @@ const Game = (function () {
             const randomIndex = Math.floor(Math.random() * roles.length);
             const roleName = roles.splice(randomIndex, 1);
             player.setRole(roleName);
+        })
+
+        // Deal with any special properties in roles when a role is assigned
+        players.forEach((player) => {
+            if ("onAssignedToPlayer" in player.role) {
+                player.role.onAssignedToPlayer();
+            }
         })
     };
 
@@ -117,7 +144,7 @@ const Game = (function () {
     const endNight = () => {
         const attacked = new Set();
         const rescued = new Set();
-
+        log.push(nightActions);
         // Extract attacked Ids and rescued Ids
         Object.values(nightActions).forEach((actions) => {
             Object.entries(actions).forEach(([key, targetId]) => {
@@ -156,7 +183,7 @@ const Game = (function () {
                     }
                 })
             } else {
-                player.die()
+                player.die();
             }
         });
         // console.log(`Players killed: ${killedIds.map((id) => getPlayerById(id).name)}`);
@@ -170,6 +197,13 @@ const Game = (function () {
                 })
             })
         })
+
+        players.forEach((player) => {
+            if ("onNightEnd" in player.role) {
+                player.role.onNightEnd();
+            }
+        })
+
         checkGameOver();
         return Array.from(new Set(killedIds)).map((id) => getPlayerById(id));
     }
@@ -192,6 +226,9 @@ const Game = (function () {
         },
         get nightRoles() {
             return nightRoles
+        },
+        get log() {
+            return log;
         },
         setRoleQuantities,
         addPlayer,

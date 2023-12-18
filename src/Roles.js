@@ -1,5 +1,5 @@
 import Game from './Game';
-import { createRole, actionAttack, actionRescue } from './RolesUtils'
+import { createRole, actionAttack, actionRescue, actionReveal, chooseRandom } from './RolesUtils'
 
 
 const Roles = {
@@ -61,7 +61,7 @@ const Roles = {
     lover: function () {
         const self = createRole({
             id: "lover",
-            name: "Lovers",
+            name: "Lover",
             type: "Human",
             team: "Citizens",
             abilities: null,
@@ -147,6 +147,146 @@ const Roles = {
             abilities: null,
             description: ["You are a maniac. You want the werewolves to win.", "You have no special abilities"]
         });
+
+        return self
+    },
+
+    seer: function () {
+        const self = createRole({
+            id: "seer",
+            name: "Seer",
+            type: "Human",
+            team: "Citizens",
+            abilities: { "reveal": { isAlive: true, excludeRole: "Seer" } },
+            description: ["Every night, you can choose one person to have their role revealed to you."]
+        })
+
+        self.inputSpec.max = 1;
+        self.reveal = (id) => {
+            actionReveal(self.name, id);
+            return true
+        }
+
+        return self
+    },
+
+    shaman: function () {
+        const self = createRole({
+            id: "shaman",
+            name: "Shaman",
+            type: "Human",
+            team: "Citizens",
+            abilities: { "reveal": { isAlive: false, excludeRole: "Shaman" } },
+            description: ["Every night, you can choose one dead person to have their role revealed to you."]
+        })
+
+        self.inputSpec.max = 1;
+        self.reveal = (id) => {
+            actionReveal(self.name, id);
+            return true
+        }
+
+        return self
+    },
+
+    mercenary: function () {
+        const self = createRole({
+            id: "mercenary",
+            name: "Mercenary",
+            type: "Human",
+            team: "Mercenary",
+            abilities: null,
+            description: ["You have been hired to eliminate a player through voting."]
+        })
+
+        self.inputSpec.max = 1;
+        self.chosenTarget = null;
+
+        self.onAssignedToPlayer = () => {
+            const targetCandidates = Game.findPlayersByAttr({ type: "Human", excludeRole: [self.name, "Joker"] });
+            self.chosenTarget = targetCandidates[Math.floor(Math.random() * targetCandidates.length)];
+        }
+
+        self.onNightEnd = () => {
+            if (!Game.getPlayerById(self.chosenTarget.id).isAlive) {
+                self.setTeam("Citizens");
+            }
+        }
+
+        self.onInitialReveal = () => {
+            return [`Your target is ${self.chosenTarget.name}`];
+        }
+
+        self.onDisplayGameOverList = () => {
+            return `(target: ${self.chosenTarget.name})`
+        }
+
+        return self
+    },
+
+    joker: function () {
+        const self = createRole({
+            id: "joker",
+            name: "Joker",
+            type: "Human",
+            team: "Joker",
+            abilities: null,
+            description: ["HAHAHA. Making people vote you out is a WIN!"]
+        })
+
+        self.inputSpec.max = 1;
+
+        return self
+    },
+
+    swordsman: function () {
+        const self = createRole({
+            id: "swordsman",
+            name: "Swordsman",
+            type: "Human",
+            team: "Citizens",
+            abilities: null,
+            description: ["You are a skilled swordsman.", "If you die, you have a 75% chance of bringing 1 of the killers down with you."]
+        })
+
+        self.inputSpec.max = 1;
+
+        self.onKilledAtNight = () => {
+            const swordsmanInstance = Game.findPlayersByAttr({ roleName: "Swordsman" })[0];
+            const roleThatKilled = Object.entries(Game.log[Game.log.length - 1])
+                .filter(([roleName, action]) => "attacked" in action && action["attacked"] == swordsmanInstance.id)
+                .map(([roleName, action]) => roleName);
+
+            const targetCandidates = Game.findPlayersByAttr({ roleName: chooseRandom(roleThatKilled), isAlive: true });
+            const result = { "kill": [swordsmanInstance.id] }
+            if (targetCandidates.length == 0) return result
+
+            const chosenTarget = chooseRandom(targetCandidates);
+            if (Math.random() <= 0.75) {
+                result["kill"].push(chosenTarget.id);
+            }
+
+            return result;
+        }
+
+        return self
+    },
+
+    detective: function () {
+        const self = createRole({
+            id: "detective",
+            name: "Detective",
+            type: "Human",
+            team: "Citizens",
+            abilities: { "reveal": { isAlive: true, excludeRole: "Detective" } },
+            description: ["Every night you can choose two people.", "You will know if they are from the same/different team."]
+        })
+
+        self.inputSpec.max = 1;
+        self.reveal = (id) => {
+            actionReveal(self.name, id);
+            return true
+        }
 
         return self
     }
