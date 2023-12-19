@@ -154,7 +154,12 @@ const ViewControl = (function () {
     const checkNightActionForm = (NightActionForm, nightRoleIndex) => {
         const roleIdentifier = Game.nightRoles[nightRoleIndex];
         const role = Roles[roleIdentifier]();
-        const playerWithRole = Game.findPlayersByAttr({ roleName: role.name })[0]; // Assumes there is only one player of this role
+        let playerWithRole = null;
+        if (role.inputSpec.max > 1) {
+            playerWithRole = Game.findPlayersByAttr({ roleName: role.name, isAlive: true })[0];
+        } else {
+            playerWithRole = Game.findPlayersByAttr({ roleName: role.name })[0]; // Assumes there is only one player of this role
+        }
         // console.log(playerWithRole.role.abilityUse);
         if (playerWithRole.role.abilityUse <= 0 || !playerWithRole.isAlive) {
             NightActionForm.querySelectorAll("input").forEach((input) => input.disabled = true);
