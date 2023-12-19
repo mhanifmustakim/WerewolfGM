@@ -163,7 +163,7 @@ const ViewControl = (function () {
         // console.log(playerWithRole.role.abilityUse);
         if (playerWithRole.role.abilityUse <= 0 || !playerWithRole.isAlive) {
             NightActionForm.querySelectorAll("input").forEach((input) => input.disabled = true);
-            NightActionForm.querySelector("button").disabled = true;
+            NightActionForm.querySelectorAll("button").forEach((button) => button.disabled = true);
             document.querySelector("#next-btn").disabled = false;
         }
 

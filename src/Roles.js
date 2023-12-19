@@ -1,6 +1,6 @@
 import Game from './Game';
 import { createRole, actionAttack, actionRescue, actionReveal, chooseRandom } from './RolesUtils'
-
+import ViewControl from './ViewControl';
 
 const Roles = {
     citizen: function () {
@@ -278,14 +278,41 @@ const Roles = {
             name: "Detective",
             type: "Human",
             team: "Citizens",
-            abilities: { "reveal": { isAlive: true, excludeRole: "Detective" } },
+            abilities: { "choose as player 1": { isAlive: true, excludeRole: "Detective" }, "choose as player 2": { isAlive: true, excludeRole: "Detective" } },
             description: ["Every night you can choose two people.", "You will know if they are from the same/different team."]
         })
 
         self.inputSpec.max = 1;
+        self.currentPlayerSelection = [];
+
+        self["choose as player 1"] = (id) => self.reveal(id);
+        self["choose as player 2"] = (id) => self.reveal(id);
+
         self.reveal = (id) => {
-            actionReveal(self.name, id);
-            return true
+            if (self.currentPlayerSelection.length == 0) {
+                self.currentPlayerSelection.push(Game.getPlayerById(id));
+                return
+            }
+
+            if (self.currentPlayerSelection.length == 1) {
+                self.currentPlayerSelection.push(Game.getPlayerById(id));
+                if (document.querySelector("#night-action-form")) {
+                    // Only used when not in simulations
+                    const player1 = self.currentPlayerSelection[0];
+                    const player2 = self.currentPlayerSelection[1];
+                    let result = null;
+
+                    if (player1.role.team == player2.role.team) {
+                        result = "are from the same team";
+                    } else {
+                        result = "are from different teams";
+                    }
+
+                    ViewControl.replaceNightActionForm([`${player1.name} and ${player2.name}`, result]);
+                }
+                self.currentPlayerSelection = [];
+                return true
+            }
         }
 
         return self

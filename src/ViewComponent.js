@@ -139,11 +139,12 @@ const NightActionForm = (index) => {
     desc.innerHTML = role.description.join("<br>");
     roleInfo.appendChild(header);
     roleInfo.appendChild(desc);
+    container.appendChild(roleInfo);
 
+    const formContainer = document.createElement("div");
+    formContainer.id = "night-action-form";
     Object.entries(role.abilities).forEach(([abilityName, targetAttr]) => {
         const form = document.createElement("form");
-        form.id = "night-action-form";
-
         const actionButton = Buttons.actionBtn(abilityName);
         const possibleTargets = Game.findPlayersByAttr(targetAttr);
         possibleTargets.forEach((player) => {
@@ -168,10 +169,10 @@ const NightActionForm = (index) => {
         form.addEventListener("submit", ViewControl.handleNightAction);
         form.appendChild(actionButton);
 
-        container.appendChild(roleInfo);
-        container.appendChild(form);
+        formContainer.appendChild(form);
     })
 
+    container.appendChild(formContainer);
     return container
 }
 
