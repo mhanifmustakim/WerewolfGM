@@ -316,6 +316,25 @@ const Roles = {
         }
 
         return self
+    },
+
+    paparazzi: function () {
+        const self = createRole({
+            id: "paparazzi",
+            name: "Paparazzi",
+            type: "Human",
+            team: "Werewolves",
+            abilities: { "reveal": { isAlive: true, excludeRole: "Paparazzi" } },
+            description: ["Every night, you can choose one person to have their role revealed to you."]
+        })
+
+        self.inputSpec.max = 1;
+        self.reveal = (id) => {
+            actionReveal(self.name, id);
+            return true
+        }
+
+        return self
     }
 }
 
