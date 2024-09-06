@@ -24,7 +24,7 @@
 
 :root {
     font-family: Lacquer;
-    font-size: 12px;
+    font-size: clamp(12px, 2.5vw, 18px);
     color: black;
 }
 
@@ -67,8 +67,38 @@ button {
     width: 3rem;
 }
 
+.role-quantity-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-self: center;
+    width: min(20ch, 60vw);
+}
+
+.role-quantity-list-item .role-name {
+    flex-grow: 1;
+}
+
+.role-quantity-list-item .role-count {
+    width: 3ch;
+    text-align: center;
+}
+
 .spaced-vertical>* {
     margin: 0.5em 0;
+}
+
+.margin-vertical {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.display-flex {
+    display: flex;
+}
+
+.flex-center-columns {
+    flex-direction: column;
+    justify-content: center;
 }
 
 .text-warning {
@@ -128,6 +158,6 @@ button {
 
 #players-list {
     display: flex;
-    width: 70%;
+    width: min(40ch, 70vw);
     flex-direction: column;
 }

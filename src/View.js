@@ -161,10 +161,16 @@ const View = (function () {
         const header = document.createElement("h3");
         header.innerHTML = `Welcome to Day ${Game.dayCount}.<br>Now is the time to discuss and work together to eliminate the werewolves.`;
 
+        const roleQuantitiesHeader = document.createElement("h4");
         const roleQuantitiesDisplay = RoleQuantitiesDisplay();
+        const roleQuantitiesContainer = document.createElement("div");
+        roleQuantitiesHeader.textContent = "Roles in the current game: ";
+        roleQuantitiesContainer.appendChild(roleQuantitiesHeader);
+        roleQuantitiesContainer.appendChild(roleQuantitiesDisplay)
+        roleQuantitiesContainer.classList.add("display-flex", "flex-center-columns", "spaced-vertical");
 
         container.appendChild(header);
-        container.appendChild(roleQuantitiesDisplay);
+        container.appendChild(roleQuantitiesContainer);
         mainDiv.appendChild(gameTitle);
         mainDiv.appendChild(container);
 
@@ -180,8 +186,9 @@ const View = (function () {
         header.textContent = "Point your finger towards the most suspiscious player. In 3, 2, 1!";
 
         const votingList = document.createElement("div");
-        votingList.id = "player-list";
         updatePlayersList(votingList, Buttons.voteOutBtn, { isAlive: true });
+        votingList.id = "players-list";
+        votingList.classList.add("spaced-vertical");
 
         container.appendChild(header);
         container.appendChild(votingList);
@@ -197,14 +204,14 @@ const View = (function () {
         const gameTitle = GameTitle();
         const container = document.createElement("div");
         const results = document.createElement("h2");
-        results.innerHTML = `The result of the voting phase is:<br><span id="voted-out"></span>`;
+        results.innerHTML = `The result of the voting phase is:<br><p id="voted-out"></p>`;
 
         container.appendChild(results);
         mainDiv.appendChild(gameTitle);
         mainDiv.appendChild(container);
 
         const votedOutSpan = container.querySelector("#voted-out");
-        votedOutSpan.classList.add("text-warning");
+        votedOutSpan.classList.add("text-warning", "text-xl", "text-center");
         votedOutSpan.textContent = votedOutName;
 
         const nextBtn = Buttons.checkContinueToNightBtn();
@@ -217,6 +224,7 @@ const View = (function () {
         const container = document.createElement("div");
         const header = document.createElement("h3");
         header.textContent = "The night has come. Everyone close your eyes!";
+        header.classList.add("text-l", "text-center");
 
         container.appendChild(header);
         mainDiv.appendChild(gameTitle);
@@ -231,13 +239,15 @@ const View = (function () {
         const gameTitle = GameTitle();
         const container = document.createElement("div");
         const results = document.createElement("h2");
-        results.innerHTML = `During the night,<br><span id="killed"></span><br>is found dead.`;
+        results.innerHTML = `During the night,<br><p id="killed"></p>died.`;
+        results.classList.add("text-center");
 
         container.appendChild(results);
         mainDiv.appendChild(gameTitle);
         mainDiv.appendChild(container);
 
         const killedSpan = container.querySelector("#killed");
+        killedSpan.classList.add("text-xl", "text-warning", "text-center");
         killedSpan.textContent = killedNames ? killedNames : "NO ONE";
 
         const startDayBtn = Buttons.startDayBtn();
@@ -250,10 +260,12 @@ const View = (function () {
         const gameTitle = GameTitle();
         const container = document.createElement("div");
         const playersList = document.createElement("div");
+        playersList.classList.add("spaced-vertical");
         GameOverList(winner).forEach((playerNode) => playersList.appendChild(playerNode));
 
         const results = document.createElement("h2");
-        results.innerHTML = `GAME OVER<br><span id="winning-team"></span><br>WINS`;
+        results.innerHTML = `TEAM<p id="winning-team"></p>WINS`;
+        results.classList.add("text-center", "text-l", "margin-vertical")
 
         container.appendChild(results);
         container.appendChild(playersList);
@@ -261,7 +273,8 @@ const View = (function () {
         mainDiv.appendChild(container);
 
         const winningTeamSpan = container.querySelector("#winning-team");
-        winningTeamSpan.textContent = "TEAM " + winner.toUpperCase();
+        winningTeamSpan.textContent = winner.toUpperCase();
+        winningTeamSpan.classList.add("text-xl");
 
         const restartBtn = Buttons.transitionBtn(displaySelectRoleQuantities, "PLAY AGAIN");
         mainDiv.appendChild(restartBtn);

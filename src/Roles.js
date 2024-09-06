@@ -46,7 +46,7 @@ const Roles = {
             type: "Human",
             team: "Citizens",
             abilities: { "heal": { isAlive: true, excludeRole: "Doctor" } },
-            description: ["The doctor chooses one player to heal every night (not himself). ", "If that player is attacked, that player lives."],
+            description: ["The doctor chooses one player to heal every night (not yourself). ", "If that player is attacked, that player lives."],
         });
 
         self.inputSpec.max = 1;
@@ -93,7 +93,7 @@ const Roles = {
             type: "Human",
             team: "Citizens",
             abilities: { "guard": { isAlive: true, excludeRole: "Bodyguard" } },
-            description: ["You are a strong bodyguard.", "You can choose one player to protect every night.", "You can only survive one attack per game", "(You automatically protect yourself every night)"]
+            description: ["You are a strong bodyguard.", "You can choose one player to protect every night.", "If either you or the person you protected are attacked, you lose this ability."]
         });
 
         self.abilityUse = 1;
@@ -123,7 +123,7 @@ const Roles = {
             type: "Human",
             team: "Citizens",
             abilities: { "kill": { isAlive: true, excludeRole: "Assassin" } },
-            description: ["At night, you can choose one player to assassinate throughout the game."]
+            description: ["At night, you can choose one player to assassinate.", "You can only assasinate one player throughout the game."]
         });
 
         self.abilityUse = 1;
@@ -145,7 +145,7 @@ const Roles = {
             type: "Human",
             team: "Werewolves",
             abilities: null,
-            description: ["You are a maniac. You want the werewolves to win.", "You have no special abilities"]
+            description: ["You are a maniac. You win if the werewolves win.", "Help them! You have no special abilities"]
         });
 
         return self
@@ -196,7 +196,7 @@ const Roles = {
             type: "Human",
             team: "Mercenary",
             abilities: null,
-            description: ["You have been hired to eliminate a player through voting."]
+            description: ["You have been hired to persuade the others to eliminate a player through voting."]
         })
 
         self.inputSpec.max = 1;

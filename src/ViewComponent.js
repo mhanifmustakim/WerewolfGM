@@ -106,15 +106,20 @@ const PlayerInitialReveal = (index) => {
     if ("onInitialReveal" in player.role) {
         const bonusInfo = player.role.onInitialReveal();
         const element = document.createElement("h3");
-        element.classList.add("text-l");
+        element.classList.add("text-xl");
         element.innerHTML = bonusInfo.join("<br>");
         afterScreen.appendChild(element);
     }
 
     const description = document.createElement("p");
-    description.classList.add("text-m");
+    description.classList.add("text-l");
     description.innerHTML = player.role.description.join("<br>");
     afterScreen.appendChild(description);
+
+    const team = document.createElement("p");
+    team.classList.add("text-l");
+    team.innerHTML = `TEAM: ${player.role.team}`;
+    afterScreen.appendChild(team);
 
     beforeScreen.addEventListener("click", (e) => {
         let confirmation = confirm(`Confirming identity of: ${player.name}`);
@@ -152,7 +157,7 @@ const NightActionForm = (index) => {
             const inputId = abilityName + "-" + player.id;
             const inputName = roleIdentifier + "-" + abilityName;
             const label = document.createElement("label");
-            label.textContent = player.name;
+            label.textContent = `Player ${player.id}: ${player.name}`;
             label.htmlFor = inputId;
             const input = document.createElement("input");
             input.required = true;
@@ -168,6 +173,7 @@ const NightActionForm = (index) => {
 
         form.addEventListener("submit", ViewControl.handleNightAction);
         form.appendChild(actionButton);
+        form.classList.add("margin-vertical");
 
         formContainer.appendChild(form);
     })
@@ -184,15 +190,23 @@ const RoleQuantitiesDisplay = () => {
         const role = Roles[roleIdentifier]();
         const container = document.createElement("div");
         const roleName = document.createElement("h5");
-        roleName.textContent = role.name + " :";
+        roleName.classList.add('role-name');
+        roleName.textContent = role.name;
+        const separator = document.createElement("div");
+        separator.textContent = ":"
         const roleCount = document.createElement("p");
+        roleCount.classList.add('role-count');
         roleCount.textContent = count;
 
         container.appendChild(roleName);
+        container.appendChild(separator);
         container.appendChild(roleCount);
+        container.classList.add("role-quantity-list-item");
         display.appendChild(container);
     })
 
+
+    display.classList.add("display-flex", "flex-center-columns");
     return display
 }
 
@@ -203,7 +217,7 @@ const PlayersNodeList = (attr = null) => {
     players.forEach((player) => {
         const playerElement = document.createElement("li");
         playerElement.classList.add("player-list-item");
-        playerElement.textContent = player.name;
+        playerElement.textContent = `Player ${player.id} : ${player.name}`;
         playerElement.setAttribute("data-id", player.id);
         playersNodeList.push(playerElement);
     });
@@ -221,7 +235,7 @@ const GameOverList = (winner) => {
             node.textContent += " " + player.role.onDisplayGameOverList();
         }
 
-        if (player.role.team === winner) node.style.color = "red";
+        if (player.role.team !== winner) node.style.color = "red";
     })
 
     return playerNodes;

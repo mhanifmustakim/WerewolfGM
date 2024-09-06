@@ -55,7 +55,7 @@ const actionReveal = (revealerName, revealedId) => {
 
     if (document.querySelector("#night-action-form")) {
         // Only used when not in simulations
-        ViewControl.replaceNightActionForm([`${player.name} is a ${player.role.name}.`]);
+        ViewControl.replaceNightActionForm([`${player.name}'s Role: ${player.role.name}.`]);
     }
 }
 
